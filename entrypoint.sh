@@ -16,6 +16,11 @@ SteamServerName="${SteamServerName:-LinuxServer}"
 WorldSaveName="${WorldSaveName:-Cascade}"
 AdditionalArgs="${AdditionalArgs:-}"
 
+if [[ ! -z "$ECS_CONTAINER_METADATA_URI" ]]; then
+    BIND_IP=$(curl -s $ECS_CONTAINER_METADATA_URI | jq -r '.Networks[0].IPv4Addresses[0]')
+    AdditionalArgs="$AdditionalArgs -MULTIHOME=$BIND_IP"
+fi
+
 # Check for updates/perform initial installation
 if [ ! -d "/server/AbioticFactor/Binaries/Win64" ] || [[ $AutoUpdate == "true" ]]; then
     steamcmd \
